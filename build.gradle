@@ -1,0 +1,59 @@
+apply plugin: 'com.android.library'
+
+android {
+
+    compileSdkVersion 28
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+//上传到maven
+apply plugin: 'maven'
+//下面AAR的文件名改成你放到libs文件夹里的文件名
+def coreAarFile = file('libs/sonic_release_1.0.3.aar')
+artifacts {
+    archives coreAarFile
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!这里配置上传到maven仓库后的  groupId、artifactId、version
+            repository(url: "file://git@github.com:wjslyj/sonic.git")
+            pom.version = "1.0.8"
+            pom.artifactId = "sonic"
+            pom.groupId = "com.unionpay.sonic"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:28.+'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
